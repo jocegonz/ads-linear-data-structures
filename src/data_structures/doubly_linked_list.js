@@ -20,6 +20,7 @@ class DoublyLinkedList {
   constructor(Node = DLLNode) {
     this.Node = Node;
     this._sentinel = new this.Node({ isSentinel: true });
+    this._count = 0;
   }
 
   _head() {
@@ -31,24 +32,51 @@ class DoublyLinkedList {
   }
 
   insertHead(element) {
+    let newHead  = new this.Node({ element, next: this._head(), prev: this._sentinel});
+    this._count += 1;
+    this._head().prev = newHead;
+    this._sentinel.next = newHead;
+    return newHead;
   }
 
   insertTail(element) {
+    let newTail = new this.Node({element, next: this._sentinel, prev: this._tail()})
+    this._count += 1;
+    this._tail().next = newTail;
+    this._sentinel.prev = newTail;
+    return newTail;
   }
 
   removeHead() {
+    0 === this._count ? undefined : this._count -=1;
+    return this._head().remove();
   }
 
   removeTail() {
+    0 === this._count ? undefined: this._count -= 1;
+    return this._tail().remove();
   }
 
   remove(node) {
+    if (node.element) {
+      this._count -= 1;
+      return node.remove();
+    }
+    return undefined;
   }
 
-  forEach(callback) {
+  forEach(callback, queue = this) {
+    let index = 0;
+    let node = this._head();
+    while (node !== this._sentinel) {
+      callback(node.element, index, queue)
+      index += 1;
+      node = node.next;
+    }
   }
 
   count() {
+    return this._count;
   }
 }
 
